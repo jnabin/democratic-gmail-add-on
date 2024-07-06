@@ -5,6 +5,7 @@ import homeRouter from "./routers/homeRouter.js"
 import contactRouter from "./routers/contactRouter.js"
 import newLoginRouter from "./routers/newLoginRouter.js"
 import logoutRouter from "./routers/logoutRouter.js"
+import gmailMessageRouter from "./routers/gmailMessageRouter.js"
 
 const config = process.env;
 
@@ -36,6 +37,7 @@ app.use(homeRouter);
 app.use(contactRouter);
 app.use(newLoginRouter);
 app.use(logoutRouter);
+app.use(gmailMessageRouter);
 
 // Start the server
 const port = config.PORT || 8080;

@@ -1,7 +1,8 @@
 import{Router} from 'express'
 import contactController from '../controllers/contactController.js'
+import authenticate from '../controllers/authenticate.js';
 
 const app = Router();
-app.post('/selectContact', contactController);
+app.post('/selectContact', authenticate, contactController);
 
 export default app;

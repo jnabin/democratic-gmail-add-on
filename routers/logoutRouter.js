@@ -1,7 +1,8 @@
 import {Router} from 'express'
 import logoutController from '../controllers/logoutController.js'
+import authenticate from '../controllers/authenticate.js';
 
 const app = Router();
-app.post("/logout", logoutController);
+app.post("/logout", authenticate, logoutController);
 
 export default app;

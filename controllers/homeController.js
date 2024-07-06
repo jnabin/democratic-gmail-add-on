@@ -1,14 +1,16 @@
 import asyncHandler from 'express-async-handler'; 
 import {OAuth2Client} from 'google-auth-library';
 import authorizeCard from '../shared/authorizeCard.js'
+import contactDetailsCard from "../shared/contactDetailsCard.js";
 import fetch from "node-fetch";
+import parsePhoneNumber from "../shared/parsePhoneNumber.js";
 import "dotenv/config";
 
 const config = process.env;
 
 export default asyncHandler(async (req, res) => {
     const event = req.body;
-    console.log(global.loggedData);
+    //console.log(global.loggedData);
     const user = await userInfo(event);
     let loggedData = global.loggedData[`${user.email}`];
     if(loggedData) {
@@ -19,21 +21,69 @@ export default asyncHandler(async (req, res) => {
         res.json(responsePayload);
       } else {
         let contacts = contactResponses.data;
-        const card = buildContactsCard(req, contacts, loggedData);
-        const responsePayload = {
-          action: {
-            navigations: [
-              {
-                pushCard: card,
+        if(contacts && contacts.length == 1) {
+          const response = await fetch(`${config.API_URL}/api/crm/contact/:${contacts[0].id}`, {
+            method: "get",
+            headers: getAuthHeader(),
+          });
+          let apiRes = await response.json();
+          if (apiRes.status == "OK") {
+            let contact = apiRes.data;
+            contact.phone_str = contact.phone ? parsePhoneNumber(contact.phone) : "";
+            contact.cellphone_str = contact.cellphone
+              ? parsePhoneNumber(contact.cellphone)
+              : "";
+            let card = contactDetailsCard(contact);
+            const responsePayload = {
+              action: {
+                navigations: [
+                  {
+                    pushCard: card,
+                  },
+                ],
+                notification: {
+                  text: "Contact details loaded.",
+                },
+              }
+            };
+            res.json(responsePayload);
+          } else if(apiRes.status == "ERROR" && data.message == 'Invalid token') {
+            const responsePayload = authorizeCard();
+            res.json(responsePayload);
+          } else {
+            let card = contactDetailsCard(null);
+            const responsePayload = {
+              renderActions: {
+                action: {
+                  navigations: [
+                    {
+                      pushCard: card,
+                    },
+                  ],
+                  notification: {
+                    text: "Contact details not loaded.",
+                  },
+                },
               },
-            ],
-            notification: {
-              text: "Contacts loaded.",
+            };
+            res.json(responsePayload);
+          }
+        } else {
+          const card = buildContactsCard(req, contacts, loggedData);
+          const responsePayload = {
+            action: {
+              navigations: [
+                {
+                  pushCard: card,
+                },
+              ],
+              notification: {
+                text: "Contacts loaded.",
+              },
             },
-          },
-        };
-    console.log(responsePayload);
-    res.json(responsePayload);
+          };
+          res.json(responsePayload);
+        }
       }
     } else {
       const responsePayload = authorizeCard();

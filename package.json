@@ -16,6 +16,8 @@
     "express": "^4.19.2",
     "express-async-handler": "^1.2.0",
     "google-auth-library": "^9.10.0",
+    "googleapis": "^140.0.1",
+    "html-to-text": "^9.0.5",
     "jsonwebtoken": "^9.0.2",
     "jwk-to-pem": "^2.0.5",
     "node-fetch": "^3.3.2"
