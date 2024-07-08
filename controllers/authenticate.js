@@ -8,6 +8,7 @@ export default asyncHandler(async (req, res, next) => {
     //console.log(SERVICE_ACCOUNT_EMAIL);
     //console.log(req);
     let event = req.body;
+    //console.log(event);
   let idToken = event.authorizationEventObject.systemIdToken; // Using express-bearer-token middleware
   if (!idToken){
     var err = new Error('Missing bearer token');

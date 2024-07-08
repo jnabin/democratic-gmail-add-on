@@ -39,7 +39,7 @@ export default asyncHandler(async (req, res) => {
       },
     };
     res.json(responsePayload);
-  } else if(apiRes.status == "ERROR" && data.message == 'Invalid token') {
+  } else if(apiRes.status == "ERROR" && apiRes.message == 'Invalid token') {
     const responsePayload = authorizeCard();
     res.json(responsePayload);
   } else {
@@ -72,16 +72,4 @@ function getAuthHeader() {
     "Content-Type": "application/json",
     Authorization: tok,
   };
-}
-
-
-
-function hexToRgb(hex){
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? {
-    red: parseInt(result[1], 16),
-    green: parseInt(result[2], 16),
-    blue: parseInt(result[3], 16),
-    alpha: 1
-  } : null;
 }

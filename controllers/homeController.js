@@ -24,9 +24,10 @@ export default asyncHandler(async (req, res) => {
         if(contacts && contacts.length == 1) {
           const response = await fetch(`${config.API_URL}/api/crm/contact/:${contacts[0].id}`, {
             method: "get",
-            headers: getAuthHeader(),
+            headers: getAuthHeader(loggedData),
           });
           let apiRes = await response.json();
+          console.log(apiRes);
           if (apiRes.status == "OK") {
             let contact = apiRes.data;
             contact.phone_str = contact.phone ? parsePhoneNumber(contact.phone) : "";
@@ -47,7 +48,7 @@ export default asyncHandler(async (req, res) => {
               }
             };
             res.json(responsePayload);
-          } else if(apiRes.status == "ERROR" && data.message == 'Invalid token') {
+          } else if(apiRes.status == "ERROR" && apiRes.message == 'Invalid token') {
             const responsePayload = authorizeCard();
             res.json(responsePayload);
           } else {
